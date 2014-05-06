@@ -9,6 +9,7 @@ function listenForMessages() {
     //get the current unix time in seconds
     var startSeconds = time / 1000;
 
+
 	console.log(process.env.ServiceBusConnString);
 	var sb = azure.createServiceBusService(process.env.ServiceBusConnString);
 
