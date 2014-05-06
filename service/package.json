@@ -6,7 +6,9 @@
   "engines": {
     "node": ">= 0.8.19"
   },
-  "dependencies": {},
+  "dependencies": {
+	"azure" : "0.8.x"
+	},
   "devDependencies": {},
   "scripts": {},
   "author": "unknown",
