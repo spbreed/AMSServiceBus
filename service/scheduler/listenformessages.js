@@ -1,7 +1,11 @@
 //import the azure module
 var azure = require('azure');
+//this should be set to how often (in seconds) a task is scheduled to run
 var c_Timeout = 60;
 
+//////////////////////////////////////////////////////////////////////////////
+// Scheduled Task Entry Point
+//////////////////////////////////////////////////////////////////////////////
 function listenForMessages() {
     
     var date = new Date();
@@ -9,7 +13,7 @@ function listenForMessages() {
     //get the current unix time in seconds
     var startSeconds = time / 1000;
 
-
+	//create the service bus
 	console.log(process.env.ServiceBusConnString);
 	var sb = azure.createServiceBusService(process.env.ServiceBusConnString);
 
@@ -27,27 +31,29 @@ function listenForMessages() {
 				   console.log('startSeconds ' + startSeconds);
 				   var newTimeout = Math.round((c_Timeout - (currentSeconds - startSeconds)));
 				   if(newTimeout > 0){
-					   //note: the recieveQueueMessage function takes ints no decimals!!
+					   //note: the recieveQueueMessage function takes ints no decimals!
+					   //start this routine for the new computed timeout
 					   listenForMessages(newTimeout);
 				   }
 			    }
 
             	if(!err){
             	   //we recieved a message within the timeout.
-				   
-				   var dataObj = JSON.parse(data.body);
-				   
-				   if(dataObj.message){
-					   console.log('Recieved message from SB: ' + dataObj.message);
-				   }
-				   else{
-					   console.error('Recieved a malformed json object');
-				   }
+		   var dataObj = JSON.parse(data.body);
+		   
+		   if(dataObj.message){
+			   console.log('Recieved message from SB: ' + dataObj.message);
+		   }
+		   else{
+			   console.error('Recieved a malformed json object');
+		   }
             	}
             	else{
+            		//we didn't recieve a message in the specified timeout.
             		console.log(err);
             	}
 
+		//go back and continue listening for messages
             	continueRecieveMessages();
             });
         }
